@@ -10,13 +10,15 @@ export async function BossOverviewCards() {
     { count: totalLeads },
     { count: qualifiedLeads },
     { count: upcomingVisits },
-    { data: activities },
+    activitiesResult,
   ] = await Promise.all([
     supabase.from("leads").select("*", { count: "exact", head: true }),
     supabase.from("leads").select("*", { count: "exact", head: true }).eq("stage", "qualified"),
     supabase.from("visits").select("*", { count: "exact", head: true }).eq("status", "scheduled"),
     supabase.from("activities").select("*").order("created_at", { ascending: false }).limit(100),
   ]);
+
+  const activities = activitiesResult.data || [];
 
   // Calculate conversion rate
   const wonLeads = await supabase
@@ -30,9 +32,9 @@ export async function BossOverviewCards() {
 
   // Count today's activities
   const today = new Date().toISOString().split("T")[0];
-  const todayActivities = activities?.filter(
-    (a) => a.created_at.startsWith(today)
-  ).length || 0;
+  const todayActivities = activities.filter(
+    (a) => a.created_at?.startsWith(today)
+  ).length;
 
   const metrics = [
     {
