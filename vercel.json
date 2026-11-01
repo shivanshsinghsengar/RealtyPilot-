@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/reminders",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/automation",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/discovery",
+      "schedule": "30 3 * * *"
+    },
+    {
+      "path": "/api/discovery-b2c",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
