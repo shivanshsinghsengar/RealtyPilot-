@@ -34,7 +34,7 @@ function parseJustDialEmail(emailBody: string): JustDialLead | null {
     const nameMatch = emailBody.match(/Name:\s*(.+)/i);
     const phoneMatch = emailBody.match(/Phone:\s*(\+?\d{10,13})/i);
     const emailMatch = emailBody.match(/Email:\s*([^\s]+@[^\s]+)/i);
-    const messageMatch = emailBody.match(/Message:\s*(.+?)(?:\n|$)/is);
+    const messageMatch = emailBody.match(/Message:\s*(.+)/i);
 
     if (!nameMatch || !phoneMatch) {
       return null; // Must have at least name and phone
