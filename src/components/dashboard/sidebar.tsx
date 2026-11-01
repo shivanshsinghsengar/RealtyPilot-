@@ -12,6 +12,7 @@ import {
   Building,
   ShieldCheck,
   X,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -22,6 +23,7 @@ interface SidebarProps {
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Boss Dashboard", href: "/dashboard/boss", icon: Crown },
   { name: "Leads & Pipeline", href: "/dashboard/leads", icon: Users },
   { name: "Site Visits", href: "/dashboard/visits", icon: CalendarCheck },
   { name: "WhatsApp Inbox", href: "/dashboard/inbox", icon: MessageSquare },
