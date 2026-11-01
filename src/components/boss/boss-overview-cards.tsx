@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/card";
 import { Users, TrendingUp, DollarSign, Calendar, Phone, Target } from "lucide-react";
+import { Database } from "@/types/database.types";
+
+type Activity = Database["public"]["Tables"]["activities"]["Row"];
 
 export async function BossOverviewCards() {
   const supabase = await createClient();
@@ -18,7 +21,7 @@ export async function BossOverviewCards() {
     supabase.from("activities").select("*").order("created_at", { ascending: false }).limit(100),
   ]);
 
-  const activities = activitiesResult.data || [];
+  const activities: Activity[] = activitiesResult.data || [];
 
   // Calculate conversion rate
   const wonLeads = await supabase

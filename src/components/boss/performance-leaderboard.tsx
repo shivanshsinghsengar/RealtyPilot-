@@ -3,14 +3,21 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, TrendingUp } from "lucide-react";
+import { Database } from "@/types/database.types";
+
+type Activity = Database["public"]["Tables"]["activities"]["Row"];
+type Lead = Database["public"]["Tables"]["leads"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 export async function PerformanceLeaderboard() {
   const supabase = await createClient();
 
   // Get user profiles with their performance stats
-  const { data: profiles } = await supabase.from("profiles").select("*");
+  const { data: profilesData } = await supabase.from("profiles").select("*");
+  
+  const profiles: Profile[] = profilesData || [];
 
-  if (!profiles) {
+  if (profiles.length === 0) {
     return (
       <Card className="p-6">
         <h3 className="text-lg font-semibold">Team Performance</h3>
@@ -23,23 +30,26 @@ export async function PerformanceLeaderboard() {
   const thisMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   const leaderboard = await Promise.all(
     profiles.map(async (profile) => {
-      const { data: wonLeads } = await supabase
+      const { data: wonLeadsData } = await supabase
         .from("leads")
         .select("*")
         .eq("stage", "won")
         .gte("updated_at", `${thisMonth}-01`)
         .limit(100);
 
+      const wonLeads: Lead[] = wonLeadsData || [];
+
       // Count leads where user was involved (check activities)
-      const { data: activities } = await supabase
+      const { data: activitiesData } = await supabase
         .from("activities")
         .select("lead_id")
         .gte("created_at", `${thisMonth}-01`)
         .limit(1000);
 
-      const userLeadIds = activities?.map((a) => a.lead_id) || [];
-      const userWonLeads =
-        wonLeads?.filter((lead) => userLeadIds.includes(lead.id)) || [];
+      const activities: Activity[] = activitiesData || [];
+      const userLeadIds = activities.map((a) => a.lead_id);
+      const userWonLeads: Lead[] =
+        wonLeads.filter((lead) => userLeadIds.includes(lead.id));
 
       return {
         ...profile,
