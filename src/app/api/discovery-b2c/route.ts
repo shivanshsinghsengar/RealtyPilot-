@@ -40,6 +40,8 @@ interface B2CDiscoveryResult {
  * 
  * This runs daily via Vercel Cron to discover real buyers actively searching for plots
  */
+// B2C Discovery endpoints disabled - uncomment when needed
+/*
 export async function GET(request: Request) {
   const result: B2CDiscoveryResult = {
     success: true,
@@ -241,3 +243,4 @@ export async function GET(request: Request) {
     return NextResponse.json(result, { status: 500 });
   }
 }
+*/

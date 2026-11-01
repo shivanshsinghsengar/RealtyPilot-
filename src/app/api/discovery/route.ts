@@ -35,6 +35,8 @@ export async function POST(request: Request) {
   return handleDiscovery(request);
 }
 
+// Discovery endpoints disabled - uncomment when needed
+/*
 export async function GET(request: Request) {
   return handleDiscovery(request);
 }
@@ -259,3 +261,4 @@ async function handleDiscovery(request: Request) {
     return NextResponse.json(result, { status: 500 });
   }
 }
+*/
