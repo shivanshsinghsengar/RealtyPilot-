@@ -111,7 +111,7 @@ export async function POST(request: Request) {
         .from("activities")
         .insert({
           // @ts-expect-error Supabase typing
-          lead_id: existing.id,
+          lead_id: (existing as any).id,
           activity_type: "note_added",
           description: `New JustDial enquiry: ${leadData.message || "No message"}`,
           metadata: {
@@ -122,7 +122,7 @@ export async function POST(request: Request) {
 
       return NextResponse.json({
         success: true,
-        leadId: existing.id,
+        leadId: (existing as any).id,
         status: "updated",
         message: "Existing lead updated with new enquiry",
       });
