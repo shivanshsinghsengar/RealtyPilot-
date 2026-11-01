@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Users, TrendingUp, DollarSign, Calendar, Phone, Target } from "lucide-react";
 
 export async function BossOverviewCards() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Fetch real-time metrics
   const [

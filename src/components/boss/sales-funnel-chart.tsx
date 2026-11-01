@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export async function SalesFunnelChart() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Get lead counts by stage
   const stages = ["new", "qualified", "negotiation", "won", "lost"];

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, TrendingUp } from "lucide-react";
 
 export async function PerformanceLeaderboard() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // Get user profiles with their performance stats
   const { data: profiles } = await supabase.from("profiles").select("*");
