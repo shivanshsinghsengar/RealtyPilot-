@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   X,
   Crown,
+  Brain,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -31,6 +32,7 @@ const navItems = [
   { name: "Insights & Scoring", href: "/dashboard/insights", icon: BarChart3 },
   { name: "Bhopal Inventory", href: "/dashboard/projects", icon: Building },
   { name: "Security & Audit", href: "/dashboard/security", icon: ShieldCheck },
+  { name: "AI Configuration", href: "/dashboard/ai-config", icon: Brain },
 ];
 
 export function DashboardSidebar({ mobileOpen = false, onMobileClose }: SidebarProps) {
