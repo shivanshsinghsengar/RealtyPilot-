@@ -11,7 +11,14 @@ import {
   Sparkles,
   Inbox,
   PlusCircle,
+  Target,
+  DollarSign,
+  Clock,
+  BarChart3,
 } from "lucide-react";
+
+import { EnhancedCard, CardHeader, StatCard, MetricCard } from "@/components/ui/enhanced-card";
+import { StatusBadge, BudgetBadge, LeadScoreBadge, TimelineBadge } from "@/components/ui/status-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +32,8 @@ interface LeadRow {
   score: number;
   source: string;
   created_at: string;
+  preferred_locality: string;
+  timeline: string;
 }
 
 export default async function DashboardPage() {
@@ -36,25 +45,35 @@ export default async function DashboardPage() {
   let qualifiedCount = 4;
   let visitsCount = 2;
   let projectsCount = 2;
+  let wonCount = 0;
+  let pipelineValue = 0;
   let recentLeads: LeadRow[] = [];
 
   if (!isPlaceholder) {
     try {
       const supabase = await createClient();
 
-      const [leadsRes, visitsRes, projectsRes, recentRes, qualRes] = await Promise.all([
+      const [leadsRes, visitsRes, projectsRes, recentRes, qualRes, wonRes] = await Promise.all([
         supabase.from("leads").select("*", { count: "exact", head: true }),
         supabase.from("visits").select("*", { count: "exact", head: true }),
         supabase.from("projects").select("*", { count: "exact", head: true }),
-        supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(5),
+        supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(6),
         supabase.from("leads").select("*", { count: "exact", head: true }).eq("stage", "qualified"),
+        supabase.from("leads").select("*", { count: "exact", head: true }).eq("stage", "won"),
       ]);
 
       leadsCount = leadsRes.count ?? 0;
       visitsCount = visitsRes.count ?? 0;
       projectsCount = projectsRes.count ?? 0;
       qualifiedCount = qualRes.count ?? 0;
+      wonCount = wonRes.count ?? 0;
       recentLeads = (recentRes.data as unknown as LeadRow[]) ?? [];
+
+      // Calculate pipeline value
+      const { data: allLeads } = await supabase.from("leads").select("budget_min");
+      if (allLeads) {
+        pipelineValue = allLeads.reduce((sum: number, lead: any) => sum + (lead.budget_min || 0), 0);
+      }
     } catch {
       // Fallback to baseline default counts
     }
@@ -73,6 +92,8 @@ export default async function DashboardPage() {
         score: 75,
         source: "website_form",
         created_at: new Date().toISOString(),
+        preferred_locality: "Kolar Road",
+        timeline: "soon",
       },
       {
         id: "c1000000-0000-0000-0000-000000000002",
@@ -84,6 +105,8 @@ export default async function DashboardPage() {
         score: 85,
         source: "meta_ad",
         created_at: new Date().toISOString(),
+        preferred_locality: "Hoshangabad Road",
+        timeline: "urgent",
       },
       {
         id: "c1000000-0000-0000-0000-000000000003",
@@ -95,6 +118,8 @@ export default async function DashboardPage() {
         score: 50,
         source: "google_places",
         created_at: new Date().toISOString(),
+        preferred_locality: "Airport Road",
+        timeline: "future",
       },
       {
         id: "c1000000-0000-0000-0000-000000000005",
@@ -106,6 +131,8 @@ export default async function DashboardPage() {
         score: 95,
         source: "website_form",
         created_at: new Date().toISOString(),
+        preferred_locality: "Kolar Road",
+        timeline: "soon",
       },
       {
         id: "c1000000-0000-0000-0000-000000000007",
@@ -117,256 +144,310 @@ export default async function DashboardPage() {
         score: 100,
         source: "direct_call",
         created_at: new Date().toISOString(),
+        preferred_locality: "Bhojpal",
+        timeline: "urgent",
       },
     ];
+    
+    pipelineValue = 20000000; // ₹2Cr for demo
   }
 
-  const kpis = [
-    {
-      label: "Total CRM Leads",
-      value: leadsCount,
-      icon: Users,
-      trend: "+10 this week",
-      color: "text-blue-600 bg-blue-50 border-blue-100",
-    },
-    {
-      label: "Site Visits Booked",
-      value: visitsCount,
-      icon: CalendarCheck,
-      trend: "Kolar & Hoshangabad Rd",
-      color: "text-purple-600 bg-purple-50 border-purple-100",
-    },
-    {
-      label: "Active Bhopal Projects",
-      value: projectsCount,
-      icon: Building2,
-      trend: "RERA Registered",
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    },
-    {
-      label: "AI Qualified Leads",
-      value: qualifiedCount,
-      icon: TrendingUp,
-      trend: "High Intent",
-      color: "text-brand-600 bg-brand-50 border-brand-100",
-    },
-  ];
+  // Calculate conversion rate
+  const conversionRate = leadsCount > 0 ? Math.round((wonCount / leadsCount) * 100) : 0;
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-sm border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/30">
-            <Sparkles className="h-3.5 w-3.5 text-brand-400" />
-            <span>RealtyPilot Live Dashboard &bull; Phase 2</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Bhopal Real Estate Sales Hub
-          </h1>
-          <p className="text-sm text-slate-300 max-w-xl">
-            Real-time pipeline monitoring, site visit coordination, and WhatsApp AI qualification for residential plots and duplexes.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/dashboard/leads"
-            className="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-semibold transition-all shadow-md shadow-brand-600/30 flex items-center gap-2"
-          >
-            <span>View Pipeline</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/dashboard/visits"
-            className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs sm:text-sm font-semibold transition-all border border-slate-700"
-          >
-            Schedule Visit
-          </Link>
-        </div>
-      </div>
-
-      {/* KPI Metrics Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi) => {
-          const Icon = kpi.icon;
-          return (
-            <div
-              key={kpi.label}
-              className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm flex items-start justify-between"
-            >
-              <div className="space-y-2">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                  {kpi.label}
-                </span>
-                <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                  {kpi.value}
-                </div>
-                <div className="text-xs text-slate-400 font-medium">
-                  {kpi.trend}
-                </div>
-              </div>
-              <div className={`p-3 rounded-xl border ${kpi.color}`}>
-                <Icon className="h-5 w-5" />
-              </div>
+    <div className="space-y-8 animate-fade-in">
+      {/* Welcome Banner - Modern */}
+      <EnhancedCard className="bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 text-white p-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-white/20 backdrop-blur-sm border border-white/30">
+              <Sparkles className="h-4 w-4 text-white" />
+              <span>RealtyPilot Live Dashboard</span>
             </div>
-          );
-        })}
-      </section>
-
-      {/* Two Column Layout: Projects + Recent Leads */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Bhopal Projects Inventory Snapshot (1 col) */}
-        <section className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-brand-600" />
-              Active Projects
-            </h2>
-            <span className="text-xs font-semibold text-slate-400">Bhopal, M.P.</span>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+              Bhopal Real Estate CRM
+            </h1>
+            <p className="text-white/80 max-w-xl text-sm md:text-base">
+              Complete sales pipeline management with AI qualification, automated WhatsApp, and real-time monitoring.
+            </p>
           </div>
 
-          <div className="space-y-4 pt-1">
-            {/* Project 1 */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-bold text-slate-900 text-sm">Narmada Greens</h3>
-                  <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                    <MapPin className="h-3 w-3 text-slate-400" /> Kolar Road
-                  </p>
-                </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  RERA APPROVED
-                </span>
-              </div>
-              <p className="text-xs text-slate-600 font-mono">
-                RERA: P-BPL-22-3841
-              </p>
-              <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs">
-                <span className="text-slate-500">Price Range</span>
-                <span className="font-bold text-slate-800">₹28L - ₹55L</span>
-              </div>
-            </div>
-
-            {/* Project 2 */}
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-bold text-slate-900 text-sm">Bhojpal Enclave</h3>
-                  <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-                    <MapPin className="h-3 w-3 text-slate-400" /> Hoshangabad Road
-                  </p>
-                </div>
-                <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  RERA APPROVED
-                </span>
-              </div>
-              <p className="text-xs text-slate-600 font-mono">
-                RERA: P-BPL-23-4190
-              </p>
-              <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs">
-                <span className="text-slate-500">Price Range</span>
-                <span className="font-bold text-slate-800">₹42L - ₹85L</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Right Column: Recent Inbound Leads (2 cols) */}
-        <section className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold text-slate-900">
-                Recent Lead Inquiries
-              </h2>
-              <p className="text-xs text-slate-500">
-                Latest prospects for Bhopal residential plots
-              </p>
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/dashboard/leads"
-              className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+              className="interactive-btn bg-white text-primary-600 hover:bg-white/90 font-semibold shadow-elevated flex items-center gap-2"
             >
-              <span>View All Leads</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>View Pipeline</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/dashboard/ai-config"
+              className="interactive-btn bg-primary-400 text-white hover:bg-primary-300 font-semibold border border-white/30"
+            >
+              AI Configuration
             </Link>
           </div>
+        </div>
+      </EnhancedCard>
 
-          {recentLeads.length === 0 ? (
-            /* Empty State */
-            <div className="py-12 px-4 text-center rounded-xl border border-dashed border-slate-200 bg-slate-50/50 space-y-3">
-              <div className="h-10 w-10 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center">
-                <Inbox className="h-5 w-5" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-semibold text-slate-800">No leads recorded yet</p>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Run <code className="font-mono text-brand-700">npm run db:seed</code> or submit your first lead form to populate the CRM.
-                </p>
-              </div>
-              <Link
-                href="/dashboard/leads"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-600 text-white text-xs font-semibold hover:bg-brand-700 shadow-sm"
-              >
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span>Create First Lead</span>
-              </Link>
+      {/* KPI Metrics Grid - Modern */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard
+          title="Total Leads"
+          value={leadsCount}
+          change="+10 this week"
+          icon={<Users className="h-6 w-6" />}
+          color="primary"
+        />
+        
+        <StatCard
+          title="Site Visits"
+          value={visitsCount}
+          change="3 scheduled"
+          icon={<CalendarCheck className="h-6 w-6" />}
+          color="secondary"
+        />
+        
+        <StatCard
+          title="Pipeline Value"
+          value={`₹${(pipelineValue / 10000000).toFixed(1)}Cr`}
+          change="+8% growth"
+          icon={<DollarSign className="h-6 w-6" />}
+          color="accent"
+        />
+        
+        <StatCard
+          title="Conversion Rate"
+          value={`${conversionRate}%`}
+          change="+3% vs last month"
+          icon={<Target className="h-6 w-6" />}
+          color="success"
+        />
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column: Metrics & Projects */}
+        <div className="space-y-6">
+          {/* Performance Metrics */}
+          <EnhancedCard>
+            <CardHeader
+              title="Performance Metrics"
+              description="This month's key performance indicators"
+            />
+            <div className="space-y-4">
+              <MetricCard
+                title="Lead Qualification Rate"
+                value={`${qualifiedCount}/${leadsCount}`}
+                progress={leadsCount > 0 ? Math.round((qualifiedCount / leadsCount) * 100) : 0}
+                trend="up"
+              />
+              <MetricCard
+                title="Visit to Deal Rate"
+                value={`${wonCount}/${visitsCount}`}
+                progress={visitsCount > 0 ? Math.round((wonCount / visitsCount) * 100) : 0}
+                trend="neutral"
+              />
+              <MetricCard
+                title="Response Time"
+                value="2.4 hrs"
+                target="4 hrs"
+                progress={60}
+                trend="up"
+              />
             </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-y border-slate-100">
-                  <tr>
-                    <th className="py-3 px-4">Lead Name</th>
-                    <th className="py-3 px-4">Stage</th>
-                    <th className="py-3 px-4">Budget Range</th>
-                    <th className="py-3 px-4">Lead Score</th>
-                    <th className="py-3 px-4">Created (IST)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {recentLeads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-slate-900">
-                        <div>{lead.full_name}</div>
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          {lead.phone}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
-                          {lead.stage?.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-700 font-medium">
-                        {lead.budget_min && lead.budget_max
-                          ? `₹${(lead.budget_min / 100000).toFixed(1)}L - ₹${(lead.budget_max / 100000).toFixed(1)}L`
-                          : "Not specified"}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span
-                          className={`font-bold px-2 py-0.5 rounded text-[11px] ${
-                            lead.score >= 80
-                              ? "bg-emerald-50 text-emerald-700"
-                              : lead.score >= 50
-                              ? "bg-amber-50 text-amber-700"
-                              : "bg-slate-100 text-slate-600"
-                          }`}
-                        >
-                          {lead.score}/100
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-500 whitespace-nowrap">
-                        {formatInIST(lead.created_at, "dd MMM, hh:mm a")}
-                      </td>
+          </EnhancedCard>
+
+          {/* Active Projects */}
+          <EnhancedCard>
+            <CardHeader
+              title="Active Projects"
+              description="Bhopal residential plot inventory"
+              action={<span className="text-xs font-semibold text-surface-600">RERA Approved</span>}
+            />
+            <div className="space-y-4">
+              <div className="p-4 rounded-lg bg-surface-50 border border-border space-y-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-surface-900">Narmada Greens</h3>
+                    <div className="flex items-center gap-1 mt-1 text-sm text-surface-600">
+                      <MapPin className="h-3 w-3" />
+                      Kolar Road, Bhopal
+                    </div>
+                  </div>
+                  <StatusBadge status="qualified" size="sm" showIcon={false} />
+                </div>
+                <div className="pt-2 border-t border-border/60 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-xs text-surface-500">Price Range</div>
+                    <div className="font-semibold text-surface-900">₹28L - ₹55L</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-surface-500">Plots Available</div>
+                    <div className="font-semibold text-surface-900">5</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-lg bg-surface-50 border border-border space-y-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-surface-900">Bhojpal Enclave</h3>
+                    <div className="flex items-center gap-1 mt-1 text-sm text-surface-600">
+                      <MapPin className="h-3 w-3" />
+                      Hoshangabad Road, Bhopal
+                    </div>
+                  </div>
+                  <StatusBadge status="qualified" size="sm" showIcon={false} />
+                </div>
+                <div className="pt-2 border-t border-border/60 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-xs text-surface-500">Price Range</div>
+                    <div className="font-semibold text-surface-900">₹42L - ₹85L</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-surface-500">Plots Available</div>
+                    <div className="font-semibold text-surface-900">3</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </EnhancedCard>
+        </div>
+
+        {/* Right Column: Recent Leads */}
+        <div className="lg:col-span-2">
+          <EnhancedCard>
+            <CardHeader
+              title="Recent Lead Inquiries"
+              description="Latest prospects for Bhopal residential plots"
+              action={
+                <Link
+                  href="/dashboard/leads"
+                  className="text-sm font-semibold text-secondary-600 hover:text-secondary-700 flex items-center gap-1"
+                >
+                  <span>View All</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              }
+            />
+
+            {recentLeads.length === 0 ? (
+              <div className="py-12 px-4 text-center rounded-xl border border-dashed border-border bg-surface-50 space-y-4">
+                <div className="h-12 w-12 rounded-full bg-surface-100 text-surface-400 mx-auto flex items-center justify-center">
+                  <Inbox className="h-6 w-6" />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-base font-semibold text-surface-800">No leads recorded yet</p>
+                  <p className="text-sm text-surface-500 max-w-sm mx-auto">
+                    Start by importing leads or creating your first lead manually.
+                  </p>
+                </div>
+                <Link
+                  href="/dashboard/leads"
+                  className="interactive-btn bg-secondary-500 text-white hover:bg-secondary-600 inline-flex items-center gap-2"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  <span>Create First Lead</span>
+                </Link>
+              </div>
+            ) : (
+              <div className="overflow-hidden rounded-lg border border-border">
+                <div className="modern-table">
+                  <thead>
+                    <tr>
+                      <th className="py-4">Lead Details</th>
+                      <th className="py-4">Status</th>
+                      <th className="py-4">Budget</th>
+                      <th className="py-4">Score</th>
+                      <th className="py-4">Timeline</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
+                  </thead>
+                  <tbody>
+                    {recentLeads.map((lead) => (
+                      <tr key={lead.id} className="group hover:bg-surface-50">
+                        <td className="py-4">
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-surface-900 group-hover:text-primary-600 transition-colors">
+                              {lead.full_name}
+                            </span>
+                            <span className="text-xs text-surface-500 mt-1">
+                              {lead.phone}
+                            </span>
+                            <span className="text-xs text-surface-400 mt-1">
+                              {lead.preferred_locality}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-4">
+                          <StatusBadge status={lead.stage as any} size="sm" />
+                        </td>
+                        <td className="py-4">
+                          {lead.budget_min ? (
+                            <BudgetBadge amount={lead.budget_min} size="sm" />
+                          ) : (
+                            <span className="text-sm text-surface-500">Not specified</span>
+                          )}
+                        </td>
+                        <td className="py-4">
+                          <LeadScoreBadge score={lead.score} size="sm" />
+                        </td>
+                        <td className="py-4">
+                          <div className="flex flex-col gap-1">
+                            <TimelineBadge timeline={lead.timeline as any} size="sm" />
+                            <span className="text-xs text-surface-500">
+                              {formatInIST(lead.created_at, "dd MMM, hh:mm a")}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </div>
+              </div>
+            )}
+          </EnhancedCard>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+            <EnhancedCard className="p-4" hoverable={false}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary-50 text-primary-600">
+                  <BarChart3 className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-surface-600">AI Qualified</div>
+                  <div className="text-xl font-bold text-surface-900">{qualifiedCount}</div>
+                </div>
+              </div>
+            </EnhancedCard>
+
+            <EnhancedCard className="p-4" hoverable={false}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-accent-50 text-accent-600">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-surface-600">Upcoming Visits</div>
+                  <div className="text-xl font-bold text-surface-900">{visitsCount}</div>
+                </div>
+              </div>
+            </EnhancedCard>
+
+            <EnhancedCard className="p-4" hoverable={false}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-success-50 text-success-600">
+                  <TrendingUp className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-surface-600">Deals Won</div>
+                  <div className="text-xl font-bold text-surface-900">{wonCount}</div>
+                </div>
+              </div>
+            </EnhancedCard>
+          </div>
+        </div>
       </div>
     </div>
   );

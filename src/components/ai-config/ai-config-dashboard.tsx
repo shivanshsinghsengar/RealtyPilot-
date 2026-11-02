@@ -69,7 +69,7 @@ export function AIConfigDashboard() {
         .select("*");
 
       const settingsObj: any = {};
-      settings?.forEach(s => {
+      settings?.forEach((s: any) => {
         settingsObj[s.setting_name] = s.setting_value;
       });
 
@@ -144,7 +144,7 @@ export function AIConfigDashboard() {
               ))}
             </div>
           )}
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-surface-500">
             Source: {knowledge.source} • Used {knowledge.usage_count} times
           </div>
         </div>

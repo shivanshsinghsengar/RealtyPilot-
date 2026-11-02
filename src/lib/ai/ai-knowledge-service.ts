@@ -54,7 +54,7 @@ export class AIKnowledgeService {
     if (knowledgeResults && knowledgeResults.length > 0) {
       // Use Gemini to match question with knowledge
       const knowledgeText = knowledgeResults
-        .map(k => `${k.knowledge_type}: ${k.content}`)
+        .map((k: any) => `${k.knowledge_type}: ${k.content}`)
         .join("\n\n");
 
       const model = this.genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
