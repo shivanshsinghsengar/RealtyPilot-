@@ -122,7 +122,7 @@ export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps) {
     },
   };
 
-  const config = priorityConfig[priority];
+  const config = priorityConfig[priority] || priorityConfig.medium;
   const sizeClasses = {
     sm: "px-2 py-0.5 text-xs",
     md: "px-3 py-1 text-sm",
@@ -256,7 +256,7 @@ export function TimelineBadge({ timeline, size = "md" }: TimelineBadgeProps) {
     },
   };
 
-  const config = timelineConfig[timeline];
+  const config = timelineConfig[timeline] || timelineConfig.flexible;
   const sizeClasses = {
     sm: "px-2 py-0.5 text-xs",
     md: "px-3 py-1 text-sm",

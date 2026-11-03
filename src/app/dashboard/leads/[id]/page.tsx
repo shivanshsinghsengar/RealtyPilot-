@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { LeadDetailHeader } from "@/components/leads/lead-detail-header";
 import { LeadNotesTimeline, ActivityItem } from "@/components/leads/lead-notes-timeline";
+import { SimpleLeadDashboard } from "@/components/leads/simple-lead-dashboard";
 import { ScoreBreakdownCard } from "@/components/insights/score-breakdown-card";
 import { calculateLeadScore } from "@/lib/scoring/engine";
 import { formatInIST } from "@/lib/utils/date";
@@ -155,6 +156,9 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     <div className="space-y-8">
       {/* Lead Header */}
       <LeadDetailHeader lead={lead} />
+
+      {/* Simple Visual Dashboard */}
+      <SimpleLeadDashboard lead={lead} scoreResult={scoreResult} activities={activities} />
 
       {/* Grid: Preferences + Notes/Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -33,7 +33,7 @@ interface LeadRow {
   source: string;
   created_at: string;
   preferred_locality: string;
-  timeline: string;
+  timeline_months: number | null;
 }
 
 export default async function DashboardPage() {
@@ -93,7 +93,7 @@ export default async function DashboardPage() {
         source: "website_form",
         created_at: new Date().toISOString(),
         preferred_locality: "Kolar Road",
-        timeline: "soon",
+        timeline_months: 1,
       },
       {
         id: "c1000000-0000-0000-0000-000000000002",
@@ -106,7 +106,7 @@ export default async function DashboardPage() {
         source: "meta_ad",
         created_at: new Date().toISOString(),
         preferred_locality: "Hoshangabad Road",
-        timeline: "urgent",
+        timeline_months: 1,
       },
       {
         id: "c1000000-0000-0000-0000-000000000003",
@@ -119,7 +119,7 @@ export default async function DashboardPage() {
         source: "google_places",
         created_at: new Date().toISOString(),
         preferred_locality: "Airport Road",
-        timeline: "future",
+        timeline_months: 6,
       },
       {
         id: "c1000000-0000-0000-0000-000000000005",
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
         source: "website_form",
         created_at: new Date().toISOString(),
         preferred_locality: "Kolar Road",
-        timeline: "soon",
+        timeline_months: 2,
       },
       {
         id: "c1000000-0000-0000-0000-000000000007",
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
         source: "direct_call",
         created_at: new Date().toISOString(),
         preferred_locality: "Bhojpal",
-        timeline: "urgent",
+        timeline_months: 1,
       },
     ];
     
@@ -163,13 +163,13 @@ export default async function DashboardPage() {
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-white/20 backdrop-blur-sm border border-white/30">
               <Sparkles className="h-4 w-4 text-white" />
-              <span>RealtyPilot Live Dashboard</span>
+              <span>RealtyPilot CRM Dashboard</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
               Bhopal Real Estate CRM
             </h1>
             <p className="text-white/80 max-w-xl text-sm md:text-base">
-              Complete sales pipeline management with AI qualification, automated WhatsApp, and real-time monitoring.
+              Manage all leads, calls, and deals in one place. AI qualification and automated WhatsApp follow-ups.
             </p>
           </div>
 
@@ -218,9 +218,9 @@ export default async function DashboardPage() {
         />
         
         <StatCard
-          title="Conversion Rate"
+          title="Success Rate"
           value={`${conversionRate}%`}
-          change="+3% vs last month"
+          change="+3% last month"
           icon={<Target className="h-6 w-6" />}
           color="success"
         />
@@ -234,7 +234,7 @@ export default async function DashboardPage() {
           <EnhancedCard>
             <CardHeader
               title="Performance Metrics"
-              description="This month's key performance indicators"
+              description="This month's performance"
             />
             <div className="space-y-4">
               <MetricCard
@@ -263,7 +263,7 @@ export default async function DashboardPage() {
           <EnhancedCard>
             <CardHeader
               title="Active Projects"
-              description="Bhopal residential plot inventory"
+              description="Bhopal residential plots"
               action={<span className="text-xs font-semibold text-surface-600">RERA Approved</span>}
             />
             <div className="space-y-4">
@@ -320,7 +320,7 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2">
           <EnhancedCard>
             <CardHeader
-              title="Recent Lead Inquiries"
+              title="Recent Leads"
               description="Latest prospects for Bhopal residential plots"
               action={
                 <Link
@@ -395,7 +395,15 @@ export default async function DashboardPage() {
                         </td>
                         <td className="py-4">
                           <div className="flex flex-col gap-1">
-                            <TimelineBadge timeline={lead.timeline as any} size="sm" />
+                            <TimelineBadge 
+                              timeline={
+                                lead.timeline_months === null ? "flexible" :
+                                lead.timeline_months <= 1 ? "urgent" :
+                                lead.timeline_months <= 3 ? "soon" :
+                                "future"
+                              } 
+                              size="sm" 
+                            />
                             <span className="text-xs text-surface-500">
                               {formatInIST(lead.created_at, "dd MMM, hh:mm a")}
                             </span>
