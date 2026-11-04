@@ -46,10 +46,10 @@ export function LeadFormModal() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs sm:text-sm font-semibold transition-all shadow-md shadow-brand-600/20 flex items-center gap-2"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium transition-colors shadow-sm whitespace-nowrap"
       >
         <Plus className="h-4 w-4" />
-        <span>Add Lead</span>
+        <span>Create Pipeline</span>
       </button>
 
       {isOpen && (

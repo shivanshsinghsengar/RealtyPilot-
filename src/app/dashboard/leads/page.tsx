@@ -213,7 +213,7 @@ export default async function LeadsPage() {
             Track inquiries, update qualification stages, and coordinate plot sales across Bhopal projects.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 flex-wrap">
           <CSVImportModal />
           <LeadFormModal />
         </div>
