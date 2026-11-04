@@ -18,15 +18,22 @@ interface QuestionContext {
 }
 
 export class AIKnowledgeService {
-  private genAI: GoogleGenerativeAI;
+  private genAI: GoogleGenerativeAI | null = null;
   private supabase: any;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not set");
+    // Don't initialize in constructor - do it lazily
+  }
+
+  private getGenAI(): GoogleGenerativeAI {
+    if (!this.genAI) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("GEMINI_API_KEY is not set in environment variables");
+      }
+      this.genAI = new GoogleGenerativeAI(apiKey);
     }
-    this.genAI = new GoogleGenerativeAI(apiKey);
+    return this.genAI;
   }
 
   async initialize() {
@@ -57,7 +64,7 @@ export class AIKnowledgeService {
         .map((k: any) => `${k.knowledge_type}: ${k.content}`)
         .join("\n\n");
 
-      const model = this.genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+      const model = this.getGenAI().getGenerativeModel({ model: "gemini-3.8-flash" });
 
       const prompt = `Question: "${question}"
 
@@ -198,7 +205,7 @@ Format: YES|NO|confidence|answer|source`;
    * Research answer using Gemini
    */
   private async researchAnswer(question: string, context: QuestionContext): Promise<string | null> {
-    const model = this.genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+    const model = this.getGenAI().getGenerativeModel({ model: "gemini-3.8-flash" });
 
     const prompt = `You are a real estate assistant for a company selling residential plots in Bhopal, India.
 
@@ -229,7 +236,7 @@ Answer in a mix of Hindi and English (Hinglish) for customer understanding.`;
    */
   private async learnFromResearch(question: string, answer: string, context: QuestionContext) {
     // Use Gemini to extract key information
-    const model = this.genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+    const model = this.getGenAI().getGenerativeModel({ model: "gemini-3.8-flash" });
 
     const prompt = `Extract structured knowledge from this Q&A for a real estate knowledge base.
 
