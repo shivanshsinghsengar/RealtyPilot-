@@ -4,6 +4,8 @@ import { CheckCircle2, AlertTriangle, ShieldCheck, Clock } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+const APP_TIMEZONE_LABEL = "Asia/Kolkata (IST, UTC+05:30)";
+
 export default function HomePage() {
   const now = new Date();
   const utcNow = toUTCString(now);
@@ -53,157 +55,206 @@ export default function HomePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header */}
-        <header className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-brand-500/20">
-                RP
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  RealtyPilot
-                </h1>
-                <p className="text-sm text-slate-500">
-                  Real Estate CRM & AI Sales Platform &bull; Bhopal, M.P.
-                </p>
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0QzMyLjY4NiAxNCAzMCAxNi42ODYgMzAgMjBzMi42ODYgNiA2IDYgNi0yLjY4NiA2LTYtMi42ODYtNi02LTZ6TTYgMzRjLTMuMzE0IDAtNiAyLjY4Ni02IDZzMi42ODYgNiA2IDYgNi0yLjY4NiA2LTYtMi42ODYtNi02LTZ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Luxury Header - Hero Style */}
+        <header className="text-center mb-12 sm:mb-16 space-y-6 animate-fade-in">
+          {/* Logo & Brand */}
+          <div className="flex justify-center mb-6">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity duration-500"></div>
+              <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-2xl border-2 border-amber-300/20 transform group-hover:scale-105 transition-transform duration-300">
+                <span className="text-white font-bold text-2xl sm:text-3xl drop-shadow-lg">RP</span>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-              <span className="h-2 w-2 rounded-full bg-brand-500 animate-pulse"></span>
-              Phase 0 Complete
-            </span>
+
+          {/* Main Title */}
+          <div className="space-y-3">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight">
+              <span className="bg-gradient-to-r from-amber-200 via-amber-300 to-amber-400 bg-clip-text text-transparent">
+                RealtyPilot
+              </span>
+            </h1>
+            <p className="text-lg sm:text-xl text-slate-300 font-light tracking-wide max-w-2xl mx-auto">
+              Luxury Real Estate CRM & AI-Powered Sales Platform
+            </p>
+            <p className="text-sm text-slate-400 flex items-center justify-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              Premium Properties • Bhopal, Madhya Pradesh
+            </p>
+          </div>
+
+          {/* Status Badge */}
+          <div className="flex justify-center pt-4">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-xl">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <span className="text-sm font-semibold text-white">System Active</span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-medium">Phase 0 Complete</span>
+            </div>
           </div>
         </header>
 
-        {/* Timestamp Banner */}
-        <div className="bg-slate-900 text-slate-100 rounded-2xl p-5 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Clock className="h-5 w-5 text-brand-400 shrink-0" />
-            <div>
-              <p className="text-xs uppercase tracking-wider text-slate-400 font-medium">
-                System Timezone Standard (DPDP / Operations)
-              </p>
-              <p className="text-sm sm:text-base font-semibold text-white">
-                {istNow} <span className="text-xs text-slate-400 font-normal">({APP_TIMEZONE_LABEL})</span>
-              </p>
+        {/* Timestamp Banner - Luxury Style */}
+        <div className="bg-gradient-to-r from-slate-800/80 via-slate-800/60 to-slate-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/10 mb-12">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                <Clock className="h-6 w-6 text-amber-400" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-1">
+                  System Timezone
+                </p>
+                <p className="text-base sm:text-lg font-semibold text-white">
+                  {istNow}
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">{APP_TIMEZONE_LABEL}</p>
+              </div>
             </div>
-          </div>
-          <div className="text-xs text-slate-400 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 font-mono">
-            DB UTC Storage: {utcNow}
+            <div className="px-4 py-2 rounded-xl bg-slate-900/60 border border-slate-700/50 backdrop-blur-sm">
+              <p className="text-xs text-slate-400 font-mono">UTC: {utcNow}</p>
+            </div>
           </div>
         </div>
 
-        {/* Stack Status Grid */}
-        <section className="space-y-4">
+        {/* Stack Status Grid - Premium Cards */}
+        <section className="space-y-6 mb-12">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900">
-              Architecture Baseline & Status
+            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+              <span className="h-1 w-12 bg-gradient-to-r from-amber-400 to-transparent rounded-full"></span>
+              System Architecture
             </h2>
             <a
               href="/api/health"
               target="_blank"
               rel="noreferrer"
-              className="text-xs font-medium text-brand-700 hover:text-brand-800 hover:underline flex items-center gap-1"
+              className="group px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/50 text-sm font-medium text-slate-300 hover:text-amber-300 transition-all duration-300 flex items-center gap-2"
             >
-              Inspect /api/health JSON &rarr;
+              Health Check
+              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
             </a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {stackItems.map((item) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {stackItems.map((item, idx) => (
               <div
                 key={item.name}
-                className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3"
+                className="group relative bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-amber-400/30 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500 overflow-hidden"
+                style={{ animationDelay: `${idx * 100}ms` }}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
-                      {item.name}
-                    </h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {item.desc}
-                    </p>
+                {/* Hover Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-amber-600/0 group-hover:from-amber-500/5 group-hover:to-amber-600/10 transition-all duration-500 rounded-2xl"></div>
+                
+                <div className="relative space-y-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 space-y-2">
+                      <h3 className="font-bold text-white text-base sm:text-lg group-hover:text-amber-300 transition-colors duration-300">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm text-slate-400 leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                    <div className={`p-2.5 rounded-xl backdrop-blur-sm ${
+                      item.isReady 
+                        ? 'bg-emerald-500/10 border border-emerald-500/20' 
+                        : 'bg-amber-500/10 border border-amber-500/20'
+                    }`}>
+                      {item.isReady ? (
+                        <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                      ) : (
+                        <AlertTriangle className="h-5 w-5 text-amber-400" />
+                      )}
+                    </div>
                   </div>
-                  {item.isReady ? (
-                    <span className="p-1 rounded-full bg-emerald-50 text-emerald-600 shrink-0">
-                      <CheckCircle2 className="h-5 w-5" />
+                  
+                  <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-xs text-slate-500 font-medium uppercase tracking-wider">Status</span>
+                    <span className={`text-sm font-semibold px-3 py-1 rounded-lg ${
+                      item.isReady 
+                        ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20' 
+                        : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                    }`}>
+                      {item.status}
                     </span>
-                  ) : (
-                    <span className="p-1 rounded-full bg-amber-50 text-amber-600 shrink-0">
-                      <AlertTriangle className="h-5 w-5" />
-                    </span>
-                  )}
-                </div>
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-medium">Status</span>
-                  <span
-                    className={`font-semibold ${
-                      item.isReady ? "text-emerald-700" : "text-amber-700"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Phase Roadmap Card */}
-        <section className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-brand-600" />
-            Execution Roadmap & Strict Guidelines
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-              <div className="text-xs font-bold text-brand-700 uppercase tracking-wider">
-                Phase 1 Next
-              </div>
-              <h4 className="font-semibold text-slate-900 text-sm">
-                Database Schema & RLS
-              </h4>
-              <p className="text-xs text-slate-600">
-                8 tables, Row-Level Security policies, and 10 fake Bhopal residential leads seed.
-              </p>
+        {/* Phase Roadmap Card - Premium Glass Effect */}
+        <section className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-2xl rounded-3xl p-8 border border-white/10 shadow-2xl space-y-6 mb-12">
+          <div className="flex items-center gap-3 pb-4 border-b border-white/10">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-500/30">
+              <ShieldCheck className="h-6 w-6 text-amber-300" />
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-              <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                Core Rules
-              </div>
-              <h4 className="font-semibold text-slate-900 text-sm">
-                DPDP & Verification
-              </h4>
-              <p className="text-xs text-slate-600">
-                Opt-out tracking, zero fabricated prices/dates, Meta webhook HMAC validation.
-              </p>
+            <div>
+              <h2 className="text-xl font-bold text-white">Execution Roadmap</h2>
+              <p className="text-sm text-slate-400">Strict guidelines & security protocols</p>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
-              <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">
-                Server-Only Secrets
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="group relative bg-gradient-to-br from-amber-500/5 to-amber-600/5 rounded-2xl p-6 border border-amber-500/20 hover:border-amber-400/40 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative space-y-3">
+                <div className="inline-block px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                  <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">Phase 1 Next</span>
+                </div>
+                <h4 className="font-bold text-white text-base">Database Schema & RLS</h4>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  8 tables, Row-Level Security policies, and 10 fake Bhopal residential leads seed.
+                </p>
               </div>
-              <h4 className="font-semibold text-slate-900 text-sm">
-                Zero Client Leaks
-              </h4>
-              <p className="text-xs text-slate-600">
-                Supabase service role, Gemini API, and WhatsApp credentials never bundled in JS.
-              </p>
+            </div>
+
+            <div className="group relative bg-gradient-to-br from-emerald-500/5 to-emerald-600/5 rounded-2xl p-6 border border-emerald-500/20 hover:border-emerald-400/40 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative space-y-3">
+                <div className="inline-block px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                  <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">Core Rules</span>
+                </div>
+                <h4 className="font-bold text-white text-base">DPDP & Verification</h4>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Opt-out tracking, zero fabricated prices/dates, Meta webhook HMAC validation.
+                </p>
+              </div>
+            </div>
+
+            <div className="group relative bg-gradient-to-br from-blue-500/5 to-blue-600/5 rounded-2xl p-6 border border-blue-500/20 hover:border-blue-400/40 transition-all duration-300 overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-transparent rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative space-y-3">
+                <div className="inline-block px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                  <span className="text-xs font-bold text-blue-300 uppercase tracking-wider">Server-Only</span>
+                </div>
+                <h4 className="font-bold text-white text-base">Zero Client Leaks</h4>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  Supabase service role, Gemini API, and WhatsApp credentials never bundled in JS.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="text-center text-xs text-slate-400 py-4">
-          RealtyPilot &bull; Residential Plots & Duplexes &bull; Bhopal, Madhya Pradesh
+        {/* Footer - Elegant */}
+        <footer className="text-center pt-8 pb-4 border-t border-white/5">
+          <p className="text-slate-400 text-sm">
+            <span className="font-semibold text-amber-300">RealtyPilot</span> • Premium Residential Plots & Duplexes
+          </p>
+          <p className="text-slate-500 text-xs mt-1">
+            Bhopal, Madhya Pradesh • India
+          </p>
         </footer>
       </div>
     </main>
   );
 }
-
-const APP_TIMEZONE_LABEL = "Asia/Kolkata (IST, UTC+05:30)";
